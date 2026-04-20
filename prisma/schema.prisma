@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String         @id @default(cuid())
+  email        String         @unique
+  passwordHash String
+  topics       UserTopic[]
+  sources      UserSource[]
+  languages    UserLanguage[]
+  bookmarks    Bookmark[]
+  createdAt    DateTime       @default(now())
+}
+
+model Language {
+  code  String         @id   // "en", "hy", etc.
+  name  String
+  users UserLanguage[]
+}
+
+model UserLanguage {
+  userId       String
+  languageCode String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  language     Language @relation(fields: [languageCode], references: [code], onDelete: Cascade)
+
+  @@id([userId, languageCode])
+}
+
+model Topic {
+  id       String      @id @default(cuid())
+  slug     String      @unique
+  name     String
+  articles Article[]
+  users    UserTopic[]
+}
+
+model UserTopic {
+  userId  String
+  topicId String
+  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topic   Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@id([userId, topicId])
+}
+
+model Source {
+  id       String       @id @default(cuid())
+  slug     String       @unique
+  name     String
+  language String       @default("en")
+  articles Article[]
+  users    UserSource[]
+}
+
+model UserSource {
+  userId   String
+  sourceId String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  source   Source @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+
+  @@id([userId, sourceId])
+}
+
+model Article {
+  id          String         @id @default(cuid())
+  title       String
+  description String?
+  url         String         @unique
+  source      String?
+  sourceId    String?
+  language    String?
+  sourceRef   Source?        @relation(fields: [sourceId], references: [id])
+  imageUrl    String?
+  topicId     String
+  topic       Topic          @relation(fields: [topicId], references: [id])
+  publishedAt DateTime
+  createdAt   DateTime       @default(now())
+  bookmarks   Bookmark[]
+  clicks      ArticleClick[]
+
+  @@index([topicId, publishedAt(sort: Desc)])
+  @@index([sourceId, publishedAt(sort: Desc)])
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  articleId String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, articleId])
+  @@index([userId, createdAt(sort: Desc)])
+}
+
+model ArticleClick {
+  id        String   @id @default(cuid())
+  articleId String
+  clickedAt DateTime @default(now())
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@index([articleId])
+  @@index([clickedAt])
+}

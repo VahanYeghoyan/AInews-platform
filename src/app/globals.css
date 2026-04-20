@@ -1,26 +1,66 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: #f8f9fb;
+  --color-foreground: #1a1a2e;
+  --color-primary: #e63946;
+  --color-primary-dark: #c1121f;
+  --color-surface: #ffffff;
+  --color-surface-hover: #f1f3f5;
+  --color-nav: #1a1a2e;
+  --color-nav-light: #2d2d44;
+  --color-muted: #6c757d;
+  --color-border: #e5e7eb;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Dark mode overrides */
+[data-theme="dark"] {
+  --color-background: #0f1117;
+  --color-foreground: #e8eaf0;
+  --color-surface: #1a1d27;
+  --color-surface-hover: #21242f;
+  --color-nav: #1a1a2e;
+  --color-nav-light: #2d2d44;
+  --color-muted: #8b93a5;
+  --color-border: #2d3142;
+}
+
+/* Light mode topic badges */
+.topic-technology    { background: #dbeafe; color: #1d4ed8; }
+.topic-business      { background: #fef3c7; color: #b45309; }
+.topic-sports        { background: #d1fae5; color: #047857; }
+.topic-health        { background: #fce7f3; color: #be185d; }
+.topic-science       { background: #ede9fe; color: #6d28d9; }
+.topic-entertainment { background: #ffe4e6; color: #e11d48; }
+.topic-general       { background: #f3f4f6; color: #374151; }
+.topic-other         { background: #f5f5f4; color: #57534e; }
+
+/* Dark mode topic badge overrides */
+[data-theme="dark"] .topic-technology    { background: #1e3a5f; color: #60a5fa; }
+[data-theme="dark"] .topic-business      { background: #451a03; color: #fbbf24; }
+[data-theme="dark"] .topic-sports        { background: #064e3b; color: #34d399; }
+[data-theme="dark"] .topic-health        { background: #4a044e; color: #f472b6; }
+[data-theme="dark"] .topic-science       { background: #2e1065; color: #a78bfa; }
+[data-theme="dark"] .topic-entertainment { background: #4c0519; color: #fb7185; }
+[data-theme="dark"] .topic-general       { background: #1f2937; color: #9ca3af; }
+[data-theme="dark"] .topic-other         { background: #1c1917; color: #a8a29e; }
+
+/* Loading spinner */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
 }
